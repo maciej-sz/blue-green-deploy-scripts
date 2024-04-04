@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Function to display help message
+display_help() {
+    echo "Usage: $0 BUILD"
+    echo -e "\nThis script requires exactly 1 argument:"
+    echo "BUILD: The build to be staged"
+    echo -e "\nExample:"
+    echo "$0 v1.2.3"
+}
+
+# Check if exactly three arguments are provided
+if [ "$#" -ne 1 ]; then
+    echo "Error: Exactly one argument is required."
+    display_help
+    exit 1
+fi
+
+SCRIPT_DIR="$(dirname "$BASH_SOURCE")"
+source "${SCRIPT_DIR}/inc/lib.sh"
+
+STAGED=$(stage_build "$1")

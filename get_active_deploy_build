@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+SCRIPT_DIR="$(dirname "$BASH_SOURCE")"
+source "${SCRIPT_DIR}/inc/lib.sh"
+
+get_active_deploy_build

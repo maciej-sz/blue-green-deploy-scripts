@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Function to display help message
+display_help() {
+    echo "Usage: $0 IMAGE_NAME KEEP_COUNT"
+    echo -e "\nThis script requires exactly two arguments. Here's what they represent:"
+    echo "IMAGE_NAME: The name of the image to remove"
+    echo "KEEP_COUNT: The number of images to keep"
+    echo -e "\nExample:"
+    echo "$0 myapp 10"
+}
+
+# Check if exactly three arguments are provided
+if [ "$#" -ne 2 ]; then
+    echo "Error: Exactly two arguments are required."
+    display_help
+    exit 1
+fi
+
+SCRIPT_DIR="$(dirname "$BASH_SOURCE")"
+source "${SCRIPT_DIR}/inc/lib.sh"
+
+cleanup_docker_images "$1" "$2"

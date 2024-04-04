@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Function to display help message
+display_help() {
+    echo "Usage: $0 FILE VAR VALUE"
+    echo -e "\nThis script requires exactly three arguments. Here's what they represent:"
+    echo "FILE: The .env file to update"
+    echo "VAR: The variable name"
+    echo "VALUE: New value of the variable"
+    echo -e "\nExample:"
+    echo "$0 .env.local APP_ENV prod"
+}
+
+# Check if exactly three arguments are provided
+if [ "$#" -ne 3 ]; then
+    echo "Error: Exactly three arguments are required."
+    display_help
+    exit 1
+fi
+
+SCRIPT_DIR="$(dirname "$BASH_SOURCE")"
+source "${SCRIPT_DIR}/inc/lib.sh"
+
+update_env_var "$1" "$2" "$3"
