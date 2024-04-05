@@ -45,13 +45,13 @@ stage_build() {
 switch_deploy() {
     if [[ "${ACTIVE_DEPLOY}" == "${BLUE_DEPLOY_NAME}" ]]; then
         update_env_var "${BUILD_ENV_FILE}" "ACTIVE_DEPLOY" "${GREEN_DEPLOY_NAME}"
-        update_env_var "${BUILD_ENV_FILE}" "BLUE_DEPLOY_LB_LABELS" "down"
-        update_env_var "${BUILD_ENV_FILE}" "GREEN_DEPLOY_LB_LABELS" ""
+        update_env_var "${BUILD_ENV_FILE}" "BLUE_APP_NETWORK" "${INTERNAL_NETWORK_NAME}"
+        update_env_var "${BUILD_ENV_FILE}" "GREEN_APP_NETWORK" "${VIRTUAL_NETWORK_NAME}"
         echo "Switched active deploy to ${GREEN_DEPLOY_NAME}"
     else
         update_env_var "${BUILD_ENV_FILE}" "ACTIVE_DEPLOY" "${BLUE_DEPLOY_NAME}"
-        update_env_var "${BUILD_ENV_FILE}" "BLUE_DEPLOY_LB_LABELS" ""
-        update_env_var "${BUILD_ENV_FILE}" "GREEN_DEPLOY_LB_LABELS" "down"
+        update_env_var "${BUILD_ENV_FILE}" "BLUE_APP_NETWORK" "${VIRTUAL_NETWORK_NAME}"
+        update_env_var "${BUILD_ENV_FILE}" "GREEN_APP_NETWORK" "${INTERNAL_NETWORK_NAME}"
         echo "Switched active deploy to ${BLUE_DEPLOY_NAME}"
     fi
 }
