@@ -23,12 +23,16 @@ update_env_var() {
 stage_build() {
     local BUILD=$1
     if [[ "${ACTIVE_DEPLOY}" == "${BLUE_DEPLOY_NAME}" ]]; then
-        update_env_var "${BUILD_ENV_FILE}" "GREEN_DEPLOY_BUILD" "${BUILD}"
-        update_env_var "${BUILD_ENV_FILE}" "STAGED_DEPLOY" "${GREEN_DEPLOY_NAME}"
+        # Active deploy is BLUE, so staging GREEN
+        update_env_var "${BUILD_ENV_FILE}" "GREEN_DEPLOY_BUILD" "${BUILD}" # update build
+        update_env_var "${BUILD_ENV_FILE}" "STAGED_DEPLOY" "${GREEN_DEPLOY_NAME}" # set the staged deploy
+        update_env_var "${BUILD_ENV_FILE}" "GREEN_APP_NETWORK" "${INTERNAL_NETWORK_NAME}" # turn off the network for staged deploy
         echo "${GREEN_DEPLOY_NAME}"
     else
-        update_env_var "${BUILD_ENV_FILE}" "BLUE_DEPLOY_BUILD" "${BUILD}"
-        update_env_var "${BUILD_ENV_FILE}" "STAGED_DEPLOY" "${BLUE_DEPLOY_NAME}"
+        # Active deploy is GREEN, so staging BLUE
+        update_env_var "${BUILD_ENV_FILE}" "BLUE_DEPLOY_BUILD" "${BUILD}" # update build
+        update_env_var "${BUILD_ENV_FILE}" "STAGED_DEPLOY" "${BLUE_DEPLOY_NAME}" # update the name of the staged deploy
+        update_env_var "${BUILD_ENV_FILE}" "BLUE_APP_NETWORK" "${INTERNAL_NETWORK_NAME}" # turn off the network for staged deploy
         echo "${BLUE_DEPLOY_NAME}"
     fi
 
@@ -44,14 +48,16 @@ stage_build() {
 
 switch_deploy() {
     if [[ "${ACTIVE_DEPLOY}" == "${BLUE_DEPLOY_NAME}" ]]; then
-        update_env_var "${BUILD_ENV_FILE}" "ACTIVE_DEPLOY" "${GREEN_DEPLOY_NAME}"
-        update_env_var "${BUILD_ENV_FILE}" "BLUE_DEPLOY_LB_LABELS" "down"
-        update_env_var "${BUILD_ENV_FILE}" "GREEN_DEPLOY_LB_LABELS" ""
+        # Active deploy is BLUE, so we are switching to GREEN
+        update_env_var "${BUILD_ENV_FILE}" "ACTIVE_DEPLOY" "${GREEN_DEPLOY_NAME}" # set the active deploy
+        update_env_var "${BUILD_ENV_FILE}" "BLUE_APP_NETWORK" "${INTERNAL_NETWORK_NAME}" # turn off the network of inactive deploy
+        update_env_var "${BUILD_ENV_FILE}" "GREEN_APP_NETWORK" "${VIRTUAL_NETWORK_NAME}" # turn on the network of active deploy
         echo "Switched active deploy to ${GREEN_DEPLOY_NAME}"
     else
-        update_env_var "${BUILD_ENV_FILE}" "ACTIVE_DEPLOY" "${BLUE_DEPLOY_NAME}"
-        update_env_var "${BUILD_ENV_FILE}" "BLUE_DEPLOY_LB_LABELS" ""
-        update_env_var "${BUILD_ENV_FILE}" "GREEN_DEPLOY_LB_LABELS" "down"
+        # Active deploy is GREEN, so we are switching to BLUE
+        update_env_var "${BUILD_ENV_FILE}" "ACTIVE_DEPLOY" "${BLUE_DEPLOY_NAME}" # set the active deploy
+        update_env_var "${BUILD_ENV_FILE}" "BLUE_APP_NETWORK" "${VIRTUAL_NETWORK_NAME}" # turn on the network of active deploy
+        update_env_var "${BUILD_ENV_FILE}" "GREEN_APP_NETWORK" "${INTERNAL_NETWORK_NAME}" # turn off the network of inactive deploy
         echo "Switched active deploy to ${BLUE_DEPLOY_NAME}"
     fi
 }
